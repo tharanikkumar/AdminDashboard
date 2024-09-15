@@ -5,6 +5,8 @@ import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { ChevronsLeft } from 'lucide-react';
 import { useState } from 'react';
+import UserNav from '@/components/shared/user-nav'; // Importing the UserNav component for the profile button
+import { ModeToggle } from '@/components/shared/theme-toggle'; // Importing the ModeToggle component for theme switching
 
 type SidebarProps = {
   className?: string;
@@ -19,10 +21,11 @@ export default function Sidebar({ className }: SidebarProps) {
     toggle();
     setTimeout(() => setStatus(false), 500);
   };
+
   return (
     <nav
       className={cn(
-        `relative z-10 hidden h-screen flex-none  px-3 md:block`,
+        `relative z-10 hidden h-screen flex-none px-3 md:block`,
         status && 'duration-500',
         !isMinimized ? 'w-72' : 'w-[80px]',
         className
@@ -34,7 +37,16 @@ export default function Sidebar({ className }: SidebarProps) {
           isMinimized ? 'justify-center ' : 'justify-between'
         )}
       >
-        {!isMinimized && <h1 className="text-2xl font-bold">Logo</h1>}
+        {/* Logo, Profile Button, and Theme Toggle */}
+        <div className="flex items-center space-x-4">
+          {!isMinimized && <h1 className="text-2xl font-bold">Logo</h1>}
+          {/* Profile Button */}
+          {!isMinimized && <UserNav />}
+          {/* Theme Toggle Button */}
+          {!isMinimized && <ModeToggle />}
+        </div>
+
+        {/* Minimize Sidebar Toggle Button */}
         <ChevronsLeft
           className={cn(
             'size-8 cursor-pointer rounded-full border bg-background text-foreground',

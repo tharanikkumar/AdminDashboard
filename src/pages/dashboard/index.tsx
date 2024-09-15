@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PageHead from '@/components/shared/page-head.jsx';
 import {
   Card,
@@ -13,23 +14,127 @@ import {
   TabsTrigger
 } from '@/components/ui/tabs.js';
 import RecentSales from './components/recent-sales.js';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+// Register necessary components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [filter, setFilter] = useState('current');
+
+  // Data for the chart
+  const chartData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'Amount Earned',
+        data: [3000, 4000, 3500, 5000, 4200, 6000, 7000], // Sample data
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: true
+      }
+    ]
+  };
+
+  // Chart options
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#fff' // Set legend text color to white
+        },
+        position: 'top' as const
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem: any) {
+            return `$${tooltipItem.raw}`;
+          }
+        },
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Tooltip background color
+        titleColor: '#fff', // Tooltip title color
+        bodyColor: '#fff' // Tooltip body color
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: '#fff' // X-axis label color
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)' // X-axis grid color
+        }
+      },
+      y: {
+        ticks: {
+          color: '#fff' // Y-axis label color
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)' // Y-axis grid color
+        }
+      }
+    }
+  };
+
+  // Chart component definition
+  const AnalyticsChart = () => (
+    <div className="rounded border bg-transparent p-4">
+      <div className="mb-4 flex justify-between">
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="rounded border bg-gray-800 p-2 text-white"
+        >
+          <option value="current">Current</option>
+          <option value="last_week">Last Week</option>
+          <option value="last_month">Last Month</option>
+        </select>
+      </div>
+      <div className="rounded border bg-transparent p-4">
+        <h3 className="mb-2 text-xl font-bold text-white">
+          Amount Earned - {filter}
+        </h3>
+        <Line data={chartData} options={chartOptions} />
+      </div>
+    </div>
+  );
+
   return (
     <>
       <PageHead title="Dashboard | App" />
-      <div className="max-h-screen flex-1 space-y-4 overflow-y-auto p-4 pt-6 md:p-8">
+      <div className="max-h-screen flex-1 space-y-4 overflow-y-auto bg-gray-900 p-4 pt-6 text-white md:p-8">
         <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Hi, Welcome back 👋
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
         </div>
-        <Tabs defaultValue="overview" className="space-y-4">
+        <Tabs
+          defaultValue="overview"
+          className="space-y-4"
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value)}
+        >
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -52,7 +157,9 @@ export default function DashboardPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
+                  <div className="text-2xl font-bold text-white">
+                    $45,231.89
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     +20.1% from last month
                   </p>
@@ -136,16 +243,16 @@ export default function DashboardPage() {
               </Card>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
+              <Card className="col-span-4 text-muted-foreground">
                 <CardHeader>
-                  <CardTitle>Overview</CardTitle>
+                  <CardTitle className="text-white">Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">{/* <Overview /> */}</CardContent>
               </Card>
-              <Card className="col-span-4 md:col-span-3">
+              <Card className="col-span-4 md:col-span-3 ">
                 <CardHeader>
-                  <CardTitle>Recent Sales</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-white ">Recent Sales</CardTitle>
+                  <CardDescription className="text-white ">
                     You made 265 sales this month.
                   </CardDescription>
                 </CardHeader>
@@ -153,6 +260,14 @@ export default function DashboardPage() {
                   <RecentSales />
                 </CardContent>
               </Card>
+            </div>
+          </TabsContent>
+          <TabsContent
+            value="analytics"
+            className={`space-y-4 ${activeTab === 'analytics' ? '' : 'hidden'}`}
+          >
+            <div className="p-4">
+              <AnalyticsChart />
             </div>
           </TabsContent>
         </Tabs>

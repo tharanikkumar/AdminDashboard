@@ -12,6 +12,8 @@ const StudentPage = lazy(() => import('@/pages/students'));
 const StudentDetailPage = lazy(
   () => import('@/pages/students/StudentDetailPage')
 );
+const AddEventsPage = lazy(() => import('@/pages/events/add_events'));
+const RemoveEventsPage = lazy(() => import('@/pages/events/remove_events'));
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +44,14 @@ export default function AppRouter() {
         {
           path: 'form',
           element: <FormPage />
+        },
+        {
+          path: 'add_events',
+          element: <AddEventsPage />
+        },
+        {
+          path: 'remove_events',
+          element: <RemoveEventsPage />
         }
       ]
     }

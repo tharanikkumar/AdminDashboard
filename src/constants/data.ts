@@ -13,6 +13,19 @@ export const navItems: NavItem[] = [
     icon: 'user',
     label: 'Student'
   },
+
+  {
+    title: 'Add Events',
+    href: '/add_events',
+    icon: 'add',
+    label: 'Add Events'
+  },
+  {
+    title: 'Remove Events',
+    href: '/remove_events',
+    icon: 'sub',
+    label: 'Remove Events'
+  },
   {
     title: 'Login',
     href: '/login',
